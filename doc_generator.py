@@ -1,5 +1,5 @@
 import argparse
-from src.file_traverser import run_doc_generator
+from DocuFlow.file_traverser import run_doc_generator
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Markdown documentation from Python code.")
