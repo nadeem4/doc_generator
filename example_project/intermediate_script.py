@@ -1,15 +1,12 @@
 import json
 
 class Person:
-    """A class representing a person."""
 
     def __init__(self, name, age):
-        """Initialize the person's name and age."""
         self.name = name
         self.age = age
 
     def to_json(self):
-        """Convert the person's data to JSON."""
         try:
             return json.dumps({'name': self.name, 'age': self.age})
         except TypeError as e:
@@ -17,7 +14,6 @@ class Person:
             return None
 
 def load_people(file_path):
-    """Load a list of people from a JSON file."""
     try:
         with open(file_path, 'r') as file:
             people_data = json.load(file)

@@ -1,7 +1,6 @@
 import math
 
 def calculate_area(radius):
-    """Calculate the area of a circle given its radius."""
     return math.pi * radius ** 2
 
 if __name__ == '__main__':

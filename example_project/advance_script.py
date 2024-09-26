@@ -2,18 +2,14 @@ import requests
 from abc import ABC, abstractmethod
 
 class DataFetcher(ABC):
-    """Abstract base class for data fetchers."""
 
     @abstractmethod
     def fetch(self, source):
-        """Fetch data from a source."""
         pass
 
 class HTTPDataFetcher(DataFetcher):
-    """Fetch data over HTTP."""
 
     def fetch(self, url):
-        """Fetch data from a URL."""
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -23,10 +19,8 @@ class HTTPDataFetcher(DataFetcher):
             return None
 
 class FileDataFetcher(DataFetcher):
-    """Fetch data from a local file."""
 
     def fetch(self, file_path):
-        """Fetch data from a file."""
         try:
             with open(file_path, 'r') as file:
                 return file.read()
@@ -35,13 +29,11 @@ class FileDataFetcher(DataFetcher):
             return None
 
 class DataProcessor:
-    """Process data fetched from a source."""
 
     def __init__(self, fetcher):
         self.fetcher = fetcher
 
     def process(self, source):
-        """Fetch and process data from the source."""
         data = self.fetcher.fetch(source)
         if data:
             print(f"Processing data from {source}")

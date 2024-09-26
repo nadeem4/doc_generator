@@ -1,3 +1,7 @@
 astor 
 markdown
 transformers
+pytorch
+openai
+pydocstyle
+docformatter

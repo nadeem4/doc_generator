@@ -9,7 +9,7 @@
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	}
-
+	,"postCreateCommand": "pip3 install --user -r requirements.txt"
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
