@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.4  # Specify the version you want
+    hooks:
+      - id: docformatter
+        args:
+          - --in-place
+          - --recursive
+          - --wrap-summaries=88
+          - --wrap-descriptions=88
+        files: \.py$
+
+  - repo: https://github.com/psf/black
+    rev: 23.1a1  # Specify the version of black you want
+    hooks:
+      - id: black
+        language_version: python3
