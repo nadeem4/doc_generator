@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class DataFetcher(ABC):
-    """A class for fetching data from various sources."""
+    """A class that fetches data from a source."""
 
     @abstractmethod
     def fetch(self, source):

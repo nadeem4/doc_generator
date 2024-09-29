@@ -57,7 +57,7 @@ class ComplexClass(ABC):
         """Set the name attribute of an object.
 
         Args:
-            value (str): The value to set as the name attribute.
+            value (str): A string representing the name to be set.
 
         Raises:
             ValueError: If the provided value is not a string.
@@ -252,9 +252,7 @@ class ComplexClass(ABC):
 
 
 class SubComplexClass(ComplexClass):
-    """```
-    A class that represents a subcomplex entity.
-    ```"""
+    """A class that represents a subcomplex entity."""
 
     def abstract_method(self):
         """Print a message indicating that the abstract method is implemented in a

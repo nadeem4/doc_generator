@@ -1,6 +1,0 @@
-{
-    "output_directory": "docs",
-    "file_extensions": [".py"],
-    "ignore_folders": ["tests"]
-}
-  
