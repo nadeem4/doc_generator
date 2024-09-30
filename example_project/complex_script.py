@@ -252,9 +252,7 @@ class ComplexClass(ABC):
 
 
 class SubComplexClass(ComplexClass):
-    """```
-    A class that represents a subcomplex entity.
-    ```"""
+    """A class that represents a subcomplex entity."""
 
     def abstract_method(self):
         """Print a message indicating that the abstract method is implemented in a

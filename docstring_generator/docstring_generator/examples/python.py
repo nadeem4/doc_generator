@@ -4,7 +4,6 @@ CLASS_EXAMPLE = '''
                         A class that represents an example.
                         """
                     '''
-
 FUNCTION_EXAMPLE = '''
         def example_function(param1, param2):
             """

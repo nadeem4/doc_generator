@@ -1,5 +1,5 @@
 from openai import OpenAI
-from examples import python
+from docstring_generator.examples import python
 
 
 class LLM:
@@ -43,7 +43,6 @@ class LLM:
                 "in the Google style guide format, including descriptions of parameters, "
                 "return values, and any exceptions raised. "
                 "Do not include the function signature in the docstring. "
-                "Ensure the docstring adheres to PEP 257 conventions."
             )
             user_message = (
                 f"Here is an example of a function with its docstring:\n{examples}\n\n"

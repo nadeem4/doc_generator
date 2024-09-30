@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class DataFetcher(ABC):
-    """A class for fetching data from various sources."""
+    """A class that fetches data from a source."""
 
     @abstractmethod
     def fetch(self, source):
@@ -101,7 +101,7 @@ class DataProcessor:
 
 
 def main():
-    """Fetch and process data from a URL and a file.
+    """``` Fetch and process data from a URL and a file.
 
     Fetches data from a URL using an HTTPDataFetcher and processes it using a DataProcessor.
     Fetches data from a file using a FileDataFetcher and processes it using a DataProcessor.
@@ -111,6 +111,7 @@ def main():
 
     Raises:
         Any exceptions raised during data fetching or processing.
+    ```
     """
     url = "https://api.github.com"
     file_path = "data.txt"

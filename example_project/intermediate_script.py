@@ -47,7 +47,7 @@ def load_people(file_path):
 
     Raises:
         IOError: If there is an issue with reading the file.
-        json.JSONDecodeError: If there is an issue with decoding the JSON data.
+        json.JSONDecodeError: If there is issue with decoding the JSON data.
     """
     try:
         with open(file_path, "r") as file:

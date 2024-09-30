@@ -1,9 +1,7 @@
-astor 
 markdown
-transformers
-torch
 openai
 pydocstyle
 docformatter
 black
 pre-commit
+libcst
