@@ -57,7 +57,7 @@ class ComplexClass(ABC):
         """Set the name attribute of an object.
 
         Args:
-            value (str): A string representing the name to be set.
+            value (str): The value to set as the name attribute.
 
         Raises:
             ValueError: If the provided value is not a string.

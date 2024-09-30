@@ -43,6 +43,7 @@ def main():
                         file_path = os.path.join(root, file)
                         if not is_excluded(file_path, exclude_patterns):
                             add_docstrings_to_file(file_path, override=args.override)
+                            print(f"Docstrings added to file '{file_path}'.")
                         else:
                             print(
                                 f"File '{file_path}' is excluded and will be skipped."
