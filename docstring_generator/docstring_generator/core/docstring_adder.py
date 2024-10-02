@@ -1,9 +1,8 @@
 import os
-import sys
-import argparse
 import fnmatch
 import libcst as cst
 from docstring_generator.utils.llm import LLM
+from docstring_generator.core.validate import validate_only_docstrings_added
 
 
 class DocstringAdder(cst.CSTTransformer):
@@ -170,13 +169,16 @@ def add_docstrings_to_file(file_path, override=False):
 
     modified_code = add_docstrings_to_code(source_code, file_path, override)
 
-    # Only write back if changes were made
-    if modified_code != source_code:
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(modified_code)
+    # Validate that only docstrings were added
+    if validate_only_docstrings_added(source_code, modified_code):
+        # Only write back if validation passes and changes were made
+        if modified_code != source_code:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(modified_code)
     else:
-        # If no changes were made, you can print a message if desired
-        pass
+        print(
+            f"Validation failed for file '{file_path}'. Code was modified beyond adding docstrings."
+        )
 
 
 def is_excluded(file_path, exclude_patterns):
