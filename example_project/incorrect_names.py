@@ -1,5 +1,5 @@
 class ThingDoer:
-    """A class that initializes object attributes and performs operations on them."""
+    """A class that performs operations on things."""
 
     def __init__(self, x: int, y: int):
         """Initialize the object with given values for attributes a and b, and set

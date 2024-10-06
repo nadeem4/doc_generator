@@ -164,7 +164,7 @@ class ComplexClass(ABC):
             None.
         """
         print(
-            f"Instance of ComplexClass called: {self._name} is {self._age} years old."
+            f"Instance of ComplexClass called: { self._name} is {self._age} years old."
         )
 
     def generate_numbers(self, limit: int):

@@ -3,7 +3,7 @@ import libcst as cst
 
 class DocstringRemover(cst.CSTTransformer):
     def leave_Module(self, original_node, updated_node):
-        if updated_node.has_docstring:
+        if self._has_docstring(updated_node.body):
             new_body = updated_node.body[1:]  # Remove the module docstring
             updated_node = updated_node.with_changes(body=new_body)
         return updated_node

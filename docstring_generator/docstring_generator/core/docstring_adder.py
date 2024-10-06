@@ -158,6 +158,7 @@ def add_docstrings_to_code(source_code, file_path, override=False):
 
 
 def add_docstrings_to_file(file_path, override=False):
+    print(f"Processing file: {file_path}")
     with open(file_path, "r", encoding="utf-8") as f:
         source_code = f.read()
 
@@ -173,8 +174,11 @@ def add_docstrings_to_file(file_path, override=False):
     if validate_only_docstrings_added(source_code, modified_code):
         # Only write back if validation passes and changes were made
         if modified_code != source_code:
+            print(f"Generated Docstring for: {file_path}")
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(modified_code)
+        else:
+            print(f"No changes made to file: {file_path}")
     else:
         print(
             f"Validation failed for file '{file_path}'. Code was modified beyond adding docstrings."

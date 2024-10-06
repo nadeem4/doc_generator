@@ -25,15 +25,12 @@ def main():
     for path in args.paths:
         if os.path.isfile(path):
             if not is_excluded(path, args.exclude) and path.endswith(".py"):
-                files_to_process.append((path, args.override))
+                add_docstrings_to_file(path, override=args.override)
         else:
             for root, _, files in os.walk(path):
                 for file in files:
                     if file.endswith(".py"):
                         file_path = os.path.join(root, file)
                         if not is_excluded(file_path, args.exclude):
-                            files_to_process.append((file_path, args.override))
-
-    # Process files in parallel
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        executor.map(process_file, files_to_process)
+                            # files_to_process.append((file_path, args.override))
+                            add_docstrings_to_file(file_path, override=args.override)
