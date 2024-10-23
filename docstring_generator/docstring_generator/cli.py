@@ -18,6 +18,12 @@ def main():
     parser.add_argument(
         "--override", action="store_true", help="Override existing docstrings."
     )
+    parser.add_argument("--apikey", help="OpenAI API key.")
+    args = parser.parse_args()
+
+    # Set the API key to environment variable if provided
+    if args.apikey:
+        os.environ["OPENAI_API_KEY"] = args.apikey
     args = parser.parse_args()
 
     # Collect all Python files to process

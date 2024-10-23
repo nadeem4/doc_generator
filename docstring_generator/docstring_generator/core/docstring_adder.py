@@ -171,12 +171,14 @@ def add_docstrings_to_file(file_path, override=False):
     modified_code = add_docstrings_to_code(source_code, file_path, override)
 
     # Validate that only docstrings were added
+    print(f"Validating changes for file: {file_path}")
     if validate_only_docstrings_added(source_code, modified_code):
         # Only write back if validation passes and changes were made
         if modified_code != source_code:
             print(f"Generated Docstring for: {file_path}")
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(modified_code)
+                print(f"Validation passed for file: {file_path}. Changes written.")
         else:
             print(f"No changes made to file: {file_path}")
     else:

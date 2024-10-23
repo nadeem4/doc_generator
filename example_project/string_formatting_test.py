@@ -51,12 +51,12 @@ def multiline_string_with_newline_escape_and_indentation():
 def multiline_string_with_newline_escape_and_indentation_and_quotes():
     """```python Return a multiline string with newline escape, indentation, and quotes.
 
-        Returns:
-            str: A multiline string with the following characteristics:
-                - Contains multiple lines.
-                - Includes newline escape sequences.
-                - Demonstrates indentation with spaces.
-                - Contains single quotes ('') and double quotes ("").
+    Returns:
+        str: A multiline string with the following characteristics:
+            - Contains multiple lines.
+            - Includes newline escape sequences.
+            - Demonstrates indentation with spaces.
+            - Contains single quotes ('') and double quotes ("").
     ```
     """
     return "This is a multiline string.\n    It has multiple lines with newline escape and indentation and quotes: 'single quotes' and \"double quotes\"."

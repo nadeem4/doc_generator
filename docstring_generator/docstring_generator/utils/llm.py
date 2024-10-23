@@ -1,5 +1,8 @@
 from openai import OpenAI
 from docstring_generator.examples import python
+from .env_apikey_handler import EnvAPIKeyHandler
+from .azurekeyvault_apikey_handler import AzureKeyVaultAPIKeyHandler
+import sys
 
 
 class LLM:
@@ -10,11 +13,21 @@ class LLM:
 
     # initialize the gpt client
     def initialize_client(self):
+        handler_chain = EnvAPIKeyHandler(successor=AzureKeyVaultAPIKeyHandler())
+
+        # Attempt to retrieve the API key
+        api_key = handler_chain.handle()
+        if not api_key:
+            print(
+                "Failed to retrieve the OpenAI API key from any source.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        print(f"API key retrieved successfully. {api_key}")
         # initialize the client
         if self.model_family == "openai":
             self.client = OpenAI(
-                # This is the default and can be omitted
-                api_key="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",
+                api_key=api_key,
             )
         else:
             raise ValueError("Model family not supported. Allowed values: ['openai']")

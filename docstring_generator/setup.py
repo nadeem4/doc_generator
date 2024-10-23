@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="docstring_adder",
+    name="docstring_generator",
     version="1.0.0",
     description="A tool to add docstrings to Python code using LLMs.",
-    long_description=open("README.md").read(),
+    long_description=open("../README.md").read(),
     long_description_content_type="text/markdown",
     author="Nadeem Khan",
     author_email="nadeem4.nk13@gmail.com",
@@ -12,8 +12,12 @@ setup(
     license="MIT",
     packages=find_packages(),
     install_requires=[
-        "libcst>=0.3.19",
-        # Add any other dependencies your project requires
+        "astor>=0.8.1,<0.9.0",
+        "libcst>=1.4.0,<2.0.0",
+        "openai>=1.52.1,<2.0.0",
+        "azure-identity>=1.7.0,<2.0.0",
+        "azure-keyvault-secrets>=4.2.0,<5.0.0",
+        "azure-storage-blob>=12.8.0,<13.0.0",
     ],
     entry_points={
         "console_scripts": [
