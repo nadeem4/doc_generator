@@ -45,7 +45,6 @@ class LLM:
                 file=sys.stderr,
             )
             sys.exit(1)
-        print(f"API key retrieved successfully. {api_key}")
         # initialize the client
         if self.model_family == "openai":
             self.client = OpenAI(
