@@ -5,11 +5,37 @@ import concurrent.futures
 
 
 def process_file(args):
+    """Process a file by adding docstrings to it.
+
+    Args:
+        args (tuple): A tuple containing the file path (str) and a boolean flag (bool) indicating whether to override existing docstrings.
+
+    Returns:
+        None
+
+    Raises:
+        FileNotFoundError: If the file specified in the file path does not exist.
+        PermissionError: If the file specified in the file path cannot be accessed due to permission issues.
+        ValueError: If invalid arguments are provided in the args tuple.
+    """
     file_path, override = args
     add_docstrings_to_file(file_path, override=override)
 
 
 def main():
+    """Automatically generate docstrings for Python code.
+
+    This function parses command-line arguments to process file or directory paths and optionally set an OpenAI API key as an environment variable.
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        None
+    """
     parser = argparse.ArgumentParser(
         description="Automatically generate docstrings for Python code."
     )

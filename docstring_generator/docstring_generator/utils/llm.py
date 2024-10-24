@@ -6,13 +6,35 @@ import sys
 
 
 class LLM:
+    """A class that represents a Language Model (LLM)."""
+
     # default the model name to gpt 3.5 turbo
     def __init__(self, model_name="gpt-3.5-turbo", model_family="openai"):
+        """Initialize a Model object with the specified model name and model family.
+
+        Args:
+            model_name (str): The name of the model. Defaults to "gpt-3.5-turbo".
+            model_family (str): The family to which the model belongs. Defaults to "openai".
+
+        Returns:
+            None
+
+        Raises:
+            None
+        """
         self.model_name = model_name
         self.model_family = model_family
 
     # initialize the gpt client
     def initialize_client(self):
+        """Initialize the GPT client.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If the model family is not supported.
+        """
         handler_chain = EnvAPIKeyHandler(successor=AzureKeyVaultAPIKeyHandler())
 
         # Attempt to retrieve the API key
@@ -33,6 +55,20 @@ class LLM:
             raise ValueError("Model family not supported. Allowed values: ['openai']")
 
     def generate_docstring(self, code_snippet, code_type):
+        """Perform generation of a docstring based on the provided code snippet and
+        type.
+
+        Args:
+            self: The object instance.
+            code_snippet (str): The code snippet for which the docstring needs to be generated.
+            code_type (str): The type of code snippet, either "class" or "function".
+
+        Returns:
+            str: The generated docstring for the code snippet.
+
+        Raises:
+            Exception: If an error occurs during the docstring generation process.
+        """
         # Examples for few-shot learning
         if code_type == "class":
             examples = python.CLASS_EXAMPLE

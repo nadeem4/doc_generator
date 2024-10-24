@@ -3,6 +3,18 @@ import libcst as cst
 
 
 def validate_only_docstrings_added(original_code, modified_code):
+    """Validate if only docstrings have been added or modified in the code.
+
+    Args:
+        original_code (str): The original code to compare.
+        modified_code (str): The modified code to compare.
+
+    Returns:
+        bool: True if only docstrings have been added or modified, False otherwise.
+
+    Raises:
+        None
+    """
     # Parse original code into CST module
     original_module = cst.parse_module(original_code)
     # Remove docstrings from original module
