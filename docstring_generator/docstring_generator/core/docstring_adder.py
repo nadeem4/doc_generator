@@ -6,7 +6,20 @@ from docstring_generator.core.validate import validate_only_docstrings_added
 
 
 class DocstringAdder(cst.CSTTransformer):
+    """A class that adds docstrings to other classes."""
+
     def __init__(self, override=False):
+        """Initialize the object with optional override flag.
+
+        Args:
+            override (bool, optional): A flag indicating whether to override certain settings. Defaults to False.
+
+        Raises:
+            None
+
+        Returns:
+            None
+        """
         super().__init__()
         self.llm = LLM()
         self.llm.initialize_client()
@@ -14,10 +27,36 @@ class DocstringAdder(cst.CSTTransformer):
         self.override = override
 
     def visit_ClassDef(self, node):
+        """Update the current class name when entering a class definition.
+
+        Args:
+            node (ast.ClassDef): The AST node representing the class definition.
+
+        Returns:
+            None
+
+        Raises:
+            None
+        """
         # Entering a class definition
         self.current_class_name = node.name.value
 
     def leave_ClassDef(self, original_node, updated_node):
+        """Leaves the ClassDef node with an updated docstring.
+
+        Checks if the class already has a docstring. If not, generates a docstring based on the simplified class code for the LLM (Language Model). Inserts the generated docstring at the beginning of the class body.
+
+        Args:
+            self: The instance of the class.
+            original_node (cst.ClassDef): The original ClassDef node.
+            updated_node (cst.ClassDef): The updated ClassDef node.
+
+        Returns:
+            cst.ClassDef: The updated ClassDef node with the inserted docstring.
+
+        Raises:
+            None.
+        """
         # Check if the class already has a docstring
         if self.override or not self._has_docstring(original_node.body.body):
             # Get simplified class code for the LLM
@@ -43,6 +82,19 @@ class DocstringAdder(cst.CSTTransformer):
         return updated_node
 
     def leave_FunctionDef(self, original_node, updated_node):
+        """Check if the function already has a docstring and add one if needed.
+
+        Args:
+            self: The instance of the class.
+            original_node: The original AST node representing the function definition.
+            updated_node: The updated AST node representing the function definition.
+
+        Returns:
+            cst.FunctionDef: The updated AST node with the docstring added if necessary.
+
+        Raises:
+            N/A
+        """
         # Check if the function already has a docstring
         if self.override or not self._has_docstring(original_node.body.body):
             # Remove decorators when generating code for the LLM
@@ -69,6 +121,18 @@ class DocstringAdder(cst.CSTTransformer):
         return updated_node
 
     def _has_docstring(self, body):
+        """Check if a given body has a docstring.
+
+        Args:
+            self: The object instance.
+            body (List[cst.BaseStatement]): The body of the function or class to check for a docstring.
+
+        Returns:
+            bool: True if the body contains a docstring, False otherwise.
+
+        Raises:
+            None.
+        """
         if body and isinstance(body[0], cst.SimpleStatementLine):
             stmt = body[0].body[0]
             if isinstance(stmt, cst.Expr) and isinstance(stmt.value, cst.SimpleString):
@@ -76,6 +140,18 @@ class DocstringAdder(cst.CSTTransformer):
         return False
 
     def _get_code_without_decorators(self, node):
+        """Get the code of a function without decorators.
+
+        Args:
+            self: The instance of the class.
+            node (cst.FunctionDef): The function node containing decorators.
+
+        Returns:
+            str: The code of the function without decorators.
+
+        Raises:
+            None.
+        """
         # Create a copy of the function without decorators
         function_def = node.with_changes(decorators=[])
         # Generate code from the function definition
@@ -84,6 +160,19 @@ class DocstringAdder(cst.CSTTransformer):
         return function_code
 
     def _get_class_code(self, node):
+        """Extracts the code for a class containing only the __init__ method and
+        attribute assignments.
+
+        Args:
+            self: The instance of the class.
+            node (cst.ClassDef): The class node to extract code from.
+
+        Returns:
+            str: The code representing the class with only the __init__ method and attribute assignments.
+
+        Raises:
+            None.
+        """
         # Include only the __init__ method and attribute assignments
         init_method = None
         for element in node.body.body:
@@ -111,19 +200,71 @@ class DocstringAdder(cst.CSTTransformer):
 
 
 class ClassOrFunctionFinder(cst.CSTVisitor):
+    """A class that identifies the presence of classes or functions within a
+    codebase."""
+
     def __init__(self):
+        """Initialize the object with a default value for the 'has_class_or_function'
+        attribute.
+
+        Attributes:
+            self.has_class_or_function (bool): A boolean flag indicating if the object has a class or function.
+
+        Raises:
+            None
+        """
         self.has_class_or_function = False
 
     def visit_ClassDef(self, node):
+        """Updates a flag to indicate the presence of a class or function in the AST
+        node.
+
+        Args:
+            self: The object instance.
+            node: The AST node representing a class definition.
+
+        Returns:
+            bool: False to stop traversal since a class is found.
+
+        Raises:
+            None.
+        """
         self.has_class_or_function = True
         return False  # Stop traversal since we found a class
 
     def visit_FunctionDef(self, node):
+        """Visit a FunctionDef node in an abstract syntax tree (AST).
+
+        This method is called when traversing an AST node representing a function definition.
+
+        Args:
+            self: The object instance.
+            node: ast.FunctionDef - The AST node representing a function definition.
+
+        Returns:
+            bool: False to stop traversal since a function node has been found.
+
+        Raises:
+            None.
+        """
         self.has_class_or_function = True
         return False  # Stop traversal since we found a function
 
 
 def add_docstrings_to_code(source_code, file_path, override=False):
+    """Add docstrings to classes and functions in Python source code.
+
+    Args:
+        source_code (str): The source code to analyze and add docstrings to.
+        file_path (str): The path to the file containing the source code.
+        override (bool, optional): Whether to override existing docstrings. Defaults to False.
+
+    Returns:
+        str: The modified source code with added docstrings.
+
+    Raises:
+        None
+    """
     module = cst.parse_module(source_code)
 
     # Check if the module is empty or contains only comments and whitespace
@@ -158,6 +299,18 @@ def add_docstrings_to_code(source_code, file_path, override=False):
 
 
 def add_docstrings_to_file(file_path, override=False):
+    """Add docstrings to the functions in a Python file and write them back to the file.
+
+    Args:
+        file_path (str): The path to the Python file to process.
+        override (bool, optional): Whether to override existing docstrings. Defaults to False.
+
+    Raises:
+        FileNotFoundError: If the specified file_path does not exist.
+        PermissionError: If the file cannot be opened due to permission issues.
+        UnicodeDecodeError: If the file cannot be decoded using the specified encoding.
+        IOError: If an I/O error occurs while reading or writing the file.
+    """
     print(f"Processing file: {file_path}")
     with open(file_path, "r", encoding="utf-8") as f:
         source_code = f.read()
@@ -188,6 +341,18 @@ def add_docstrings_to_file(file_path, override=False):
 
 
 def is_excluded(file_path, exclude_patterns):
+    """Check if a file path is excluded based on a list of patterns.
+
+    Args:
+        file_path (str): The file path to check for exclusion.
+        exclude_patterns (list): A list of patterns to match against the file path.
+
+    Returns:
+        bool: True if the file path is excluded by any of the patterns, False otherwise.
+
+    Raises:
+        None
+    """
     for pattern in exclude_patterns:
         if fnmatch.fnmatch(os.path.abspath(file_path), os.path.abspath(pattern)):
             return True

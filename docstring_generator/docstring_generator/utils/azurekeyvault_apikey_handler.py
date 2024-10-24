@@ -6,7 +6,17 @@ from azure.keyvault.secrets import SecretClient
 
 # Handler for Azure Key Vault
 class AzureKeyVaultAPIKeyHandler(APIKeyHandler):
+    """Handler for Azure Key Vault."""
+
     def handle(self):
+        """Retrieve an API key from Azure Key Vault.
+
+        Returns the API key retrieved from Azure Key Vault.
+
+        Raises:
+            ValueError: If Azure Key Vault URL or Secret Name are not set.
+            Exception: If the API key is not found in Azure Key Vault.
+        """
         try:
             vault_url = os.getenv("AZURE_KEY_VAULT_URL")
             secret_name = os.getenv("AZURE_SECRET_NAME")
