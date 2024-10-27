@@ -4,7 +4,7 @@ setup(
     name="docstring_generator",
     version="1.0.0",
     description="A tool to add docstrings to Python code using LLMs.",
-    long_description=open("../README.md").read(),
+    long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     author="Nadeem Khan",
     author_email="nadeem4.nk13@gmail.com",
@@ -21,7 +21,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "generate_docstring=docstring_generator.cli:main",
+            "generate_docstring=doc_generator.cli:main",
         ],
     },
     classifiers=[
