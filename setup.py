@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="docstring_generator",
+    name="doc_generator",
     version="1.0.3",
     description="A tool to add docstrings to Python code using LLMs.",
     long_description=open("README.md").read(),
