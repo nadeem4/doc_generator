@@ -1,5 +1,5 @@
 from openai import OpenAI
-from docstring_generator.examples import python
+from doc_generator.examples import python
 from .env_apikey_handler import EnvAPIKeyHandler
 from .azurekeyvault_apikey_handler import AzureKeyVaultAPIKeyHandler
 import sys

@@ -1,6 +1,6 @@
 import os
 import argparse
-from docstring_generator.core.docstring_adder import add_docstrings_to_file, is_excluded
+from doc_generator.core.docstring_adder import add_docstrings_to_file, is_excluded
 
 
 def main():

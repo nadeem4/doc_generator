@@ -1,4 +1,4 @@
-from docstring_generator.core.docstring_remover import DocstringRemover
+from doc_generator.core.docstring_remover import DocstringRemover
 import libcst as cst
 
 
