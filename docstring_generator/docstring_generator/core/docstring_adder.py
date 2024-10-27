@@ -23,7 +23,7 @@ class DocstringAdder(cst.CSTTransformer):
         super().__init__()
         self.llm = LLM()
         self.llm.initialize_client()
-        self.current_class_name = None  # Track the current class context
+        self.current_class_name = None
         self.override = override
 
     def visit_ClassDef(self, node):
@@ -57,18 +57,13 @@ class DocstringAdder(cst.CSTTransformer):
         Raises:
             None.
         """
-        # Check if the class already has a docstring
         if self.override or not self._has_docstring(original_node.body.body):
-            # Get simplified class code for the LLM
             class_code = self._get_class_code(original_node)
-            # Generate the docstring
             docstring = self.llm.generate_docstring(class_code, code_type="class")
             if docstring:
-                # Create a new docstring node
                 docstring_node = cst.SimpleStatementLine(
                     body=[cst.Expr(value=cst.SimpleString(f'"""{docstring}"""'))]
                 )
-                # Insert the docstring at the beginning of the class body
                 new_body = [docstring_node] + list(
                     updated_node.body.body[1:]
                     if self.override
@@ -77,7 +72,6 @@ class DocstringAdder(cst.CSTTransformer):
                 updated_node = updated_node.with_changes(
                     body=updated_node.body.with_changes(body=new_body)
                 )
-        # Exiting the class definition
         self.current_class_name = None
         return updated_node
 
@@ -95,21 +89,15 @@ class DocstringAdder(cst.CSTTransformer):
         Raises:
             N/A
         """
-        # Check if the function already has a docstring
         if self.override or not self._has_docstring(original_node.body.body):
-            # Remove decorators when generating code for the LLM
             function_code = self._get_code_without_decorators(original_node)
-            # Determine if the function is a method
             is_method = self.current_class_name is not None
             code_type = "method" if is_method else "function"
-            # Generate the docstring
             docstring = self.llm.generate_docstring(function_code, code_type=code_type)
             if docstring:
-                # Create a new docstring node
                 docstring_node = cst.SimpleStatementLine(
                     body=[cst.Expr(value=cst.SimpleString(f'"""{docstring}"""'))]
                 )
-                # Insert the docstring at the beginning of the function body
                 new_body = [docstring_node] + list(
                     updated_node.body.body[1:]
                     if self.override
@@ -152,9 +140,7 @@ class DocstringAdder(cst.CSTTransformer):
         Raises:
             None.
         """
-        # Create a copy of the function without decorators
         function_def = node.with_changes(decorators=[])
-        # Generate code from the function definition
         module = cst.Module(body=[function_def])
         function_code = module.code
         return function_code
@@ -173,7 +159,6 @@ class DocstringAdder(cst.CSTTransformer):
         Raises:
             None.
         """
-        # Include only the __init__ method and attribute assignments
         init_method = None
         for element in node.body.body:
             if (
@@ -183,17 +168,14 @@ class DocstringAdder(cst.CSTTransformer):
                 init_method = element.with_changes(decorators=[])
                 break
         if init_method:
-            # Create a simplified class node with the __init__ method
             class_def = node.with_changes(
                 bases=[], decorators=[], body=node.body.with_changes(body=[init_method])
             )
         else:
-            # Create an empty class if no __init__ method
             pass_stmt = cst.SimpleStatementLine(body=[cst.Pass()])
             class_def = node.with_changes(
                 bases=[], decorators=[], body=node.body.with_changes(body=[pass_stmt])
             )
-        # Generate code from the class definition
         module = cst.Module(body=[class_def])
         class_code = module.code
         return class_code
@@ -230,7 +212,7 @@ class ClassOrFunctionFinder(cst.CSTVisitor):
             None.
         """
         self.has_class_or_function = True
-        return False  # Stop traversal since we found a class
+        return False
 
     def visit_FunctionDef(self, node):
         """Visit a FunctionDef node in an abstract syntax tree (AST).
@@ -248,7 +230,7 @@ class ClassOrFunctionFinder(cst.CSTVisitor):
             None.
         """
         self.has_class_or_function = True
-        return False  # Stop traversal since we found a function
+        return False
 
 
 def add_docstrings_to_code(source_code, file_path, override=False):
@@ -267,7 +249,6 @@ def add_docstrings_to_code(source_code, file_path, override=False):
     """
     module = cst.parse_module(source_code)
 
-    # Check if the module is empty or contains only comments and whitespace
     if not any(
         not isinstance(stmt, (cst.EmptyLine, cst.SimpleStatementLine))
         or (
@@ -276,18 +257,15 @@ def add_docstrings_to_code(source_code, file_path, override=False):
         )
         for stmt in module.body
     ):
-        # File is empty or contains only comments
         print(
             f"File '{file_path}' is empty or contains only comments and will be skipped."
         )
         return source_code
 
-    # Find if the module contains any classes or functions
     class_or_function_finder = ClassOrFunctionFinder()
     module.visit(class_or_function_finder)
 
     if not class_or_function_finder.has_class_or_function:
-        # Skip transformation if the module doesn't contain classes or functions
         print(
             f"File '{file_path}' does not contain classes, methods, or functions and will be skipped."
         )
@@ -315,18 +293,14 @@ def add_docstrings_to_file(file_path, override=False):
     with open(file_path, "r", encoding="utf-8") as f:
         source_code = f.read()
 
-    # Check if the file is empty
     if not source_code.strip():
-        # Skip processing empty files
         print(f"File '{file_path}' is empty and will be skipped.")
         return
 
     modified_code = add_docstrings_to_code(source_code, file_path, override)
 
-    # Validate that only docstrings were added
     print(f"Validating changes for file: {file_path}")
     if validate_only_docstrings_added(source_code, modified_code):
-        # Only write back if validation passes and changes were made
         if modified_code != source_code:
             print(f"Generated Docstring for: {file_path}")
             with open(file_path, "w", encoding="utf-8") as f:

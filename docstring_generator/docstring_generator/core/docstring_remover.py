@@ -19,7 +19,7 @@ class DocstringRemover(cst.CSTTransformer):
             None.
         """
         if self._has_docstring(updated_node.body):
-            new_body = updated_node.body[1:]  # Remove the module docstring
+            new_body = updated_node.body[1:]
             updated_node = updated_node.with_changes(body=new_body)
         return updated_node
 
@@ -38,7 +38,7 @@ class DocstringRemover(cst.CSTTransformer):
             None.
         """
         if self._has_docstring(updated_node.body.body):
-            new_body = updated_node.body.body[1:]  # Remove the docstring
+            new_body = updated_node.body.body[1:]
             updated_node = updated_node.with_changes(
                 body=updated_node.body.with_changes(body=new_body)
             )
@@ -59,7 +59,7 @@ class DocstringRemover(cst.CSTTransformer):
             None.
         """
         if self._has_docstring(updated_node.body.body):
-            new_body = updated_node.body.body[1:]  # Remove the docstring
+            new_body = updated_node.body.body[1:]
             updated_node = updated_node.with_changes(
                 body=updated_node.body.with_changes(body=new_body)
             )

@@ -1,25 +1,6 @@
 import os
 import argparse
 from docstring_generator.core.docstring_adder import add_docstrings_to_file, is_excluded
-import concurrent.futures
-
-
-def process_file(args):
-    """Process a file by adding docstrings to it.
-
-    Args:
-        args (tuple): A tuple containing the file path (str) and a boolean flag (bool) indicating whether to override existing docstrings.
-
-    Returns:
-        None
-
-    Raises:
-        FileNotFoundError: If the file specified in the file path does not exist.
-        PermissionError: If the file specified in the file path cannot be accessed due to permission issues.
-        ValueError: If invalid arguments are provided in the args tuple.
-    """
-    file_path, override = args
-    add_docstrings_to_file(file_path, override=override)
 
 
 def main():
@@ -52,8 +33,6 @@ def main():
         os.environ["OPENAI_API_KEY"] = args.apikey
     args = parser.parse_args()
 
-    # Collect all Python files to process
-    files_to_process = []
     for path in args.paths:
         if os.path.isfile(path):
             if not is_excluded(path, args.exclude) and path.endswith(".py"):
@@ -64,5 +43,4 @@ def main():
                     if file.endswith(".py"):
                         file_path = os.path.join(root, file)
                         if not is_excluded(file_path, args.exclude):
-                            # files_to_process.append((file_path, args.override))
                             add_docstrings_to_file(file_path, override=args.override)

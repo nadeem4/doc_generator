@@ -8,7 +8,7 @@ import sys
 class LLM:
     """A class that represents a Language Model (LLM)."""
 
-    # default the model name to gpt 3.5 turbo
+    # TODO: allow user to specify model_name and model_family
     def __init__(self, model_name="gpt-3.5-turbo", model_family="openai"):
         """Initialize a Model object with the specified model name and model family.
 
@@ -25,7 +25,6 @@ class LLM:
         self.model_name = model_name
         self.model_family = model_family
 
-    # initialize the gpt client
     def initialize_client(self):
         """Initialize the GPT client.
 
@@ -37,7 +36,6 @@ class LLM:
         """
         handler_chain = EnvAPIKeyHandler(successor=AzureKeyVaultAPIKeyHandler())
 
-        # Attempt to retrieve the API key
         api_key = handler_chain.handle()
         if not api_key:
             print(
@@ -45,7 +43,6 @@ class LLM:
                 file=sys.stderr,
             )
             sys.exit(1)
-        # initialize the client
         if self.model_family == "openai":
             self.client = OpenAI(
                 api_key=api_key,
@@ -68,7 +65,6 @@ class LLM:
         Raises:
             Exception: If an error occurs during the docstring generation process.
         """
-        # Examples for few-shot learning
         if code_type == "class":
             examples = python.CLASS_EXAMPLE
             system_message = (
@@ -85,7 +81,6 @@ class LLM:
             )
         else:
             examples = python.FUNCTION_EXAMPLE
-            # Prepare the messages for the ChatCompletion API
             system_message = (
                 "You are an expert Python developer. Write clear and comprehensive docstrings "
                 "in the Google style guide format, including descriptions of parameters, "
@@ -119,7 +114,6 @@ class LLM:
                 temperature=0,
             )
             docstring = response.choices[0].message.content.strip()
-            # Remove any function signatures from the docstring if present
             lines = docstring.split("\n")
             filtered_lines = [
                 line
@@ -127,7 +121,6 @@ class LLM:
                 if not line.strip().startswith(("def ", "class "))
             ]
             docstring = "\n".join(filtered_lines).strip()
-            # Remove any surrounding quotes if present
             docstring = docstring.strip('"').strip("'")
             return docstring
         except Exception as e:
