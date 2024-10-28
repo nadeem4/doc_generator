@@ -21,7 +21,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "generate_docstring=doc_generator.cli:main",
+            "generate_docstring=doc_craft.cli:main",
         ],
     },
     classifiers=[
