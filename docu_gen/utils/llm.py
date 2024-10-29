@@ -1,9 +1,9 @@
 from openai import OpenAI
-from doc_craft.examples import python
+from docu_gen.examples import python
 from .env_apikey_handler import EnvAPIKeyHandler
 from .azurekeyvault_apikey_handler import AzureKeyVaultAPIKeyHandler
 import sys
-from doc_craft.core.constant import AI_MODEL
+from docu_gen.core.constant import AI_MODEL
 
 
 class LLM:

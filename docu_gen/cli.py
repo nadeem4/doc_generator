@@ -1,6 +1,6 @@
 import os
 import argparse
-from doc_craft.core.docstring_adder import add_docstrings_to_file, is_excluded
+from docu_gen.core.docstring_adder import add_docstrings_to_file, is_excluded
 
 
 def main():

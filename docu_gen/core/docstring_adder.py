@@ -1,8 +1,8 @@
 import os
 import fnmatch
 import libcst as cst
-from doc_craft.utils.llm import LLM
-from doc_craft.core.validate import validate_only_docstrings_added
+from docu_gen.utils.llm import LLM
+from docu_gen.core.validate import validate_only_docstrings_added
 
 
 class DocstringAdder(cst.CSTTransformer):
