@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="gen-doc",
+    name="docu-gen",
     version="1.0.5",
     description="A tool to add docstrings to Python code using LLMs.",
     long_description=open("README.md").read(),
