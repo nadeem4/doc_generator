@@ -15,14 +15,14 @@ A tool to automatically add docstrings to your Python code using Large Language 
 You can install the `docstring_generator` package using `pip`:
 
 ```bash
-pip install docstring_generator
+pip install docu-gen
 ```
 
 Alternatively, clone the repository and install the required packages:
 
 ```bash
 git clone https://github.com/nadeem4/doc_generator.git
-cd doc_generator/docstring_generator
+cd doc_generator/
 pip install .
 ```
 
