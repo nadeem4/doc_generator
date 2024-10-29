@@ -3,13 +3,18 @@ from doc_craft.examples import python
 from .env_apikey_handler import EnvAPIKeyHandler
 from .azurekeyvault_apikey_handler import AzureKeyVaultAPIKeyHandler
 import sys
+from doc_craft.core.constant import AI_MODEL
 
 
 class LLM:
     """A class that represents a Language Model (LLM)."""
 
     # TODO: allow user to specify model_name and model_family
-    def __init__(self, model_name="gpt-3.5-turbo", model_family="openai"):
+    def __init__(
+        self,
+        model_name=AI_MODEL.get("model_name"),
+        model_family=AI_MODEL.get("model_family"),
+    ):
         """Initialize a Model object with the specified model name and model family.
 
         Args:
