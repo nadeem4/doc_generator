@@ -1,5 +1,5 @@
 class ThingDoer:
-    """A class that performs actions based on the provided values."""
+    """A class that performs actions based on the provided input values."""
 
     def __init__(self, x: int, y: int):
         """Initialize the object with given values for attributes a and b, and set

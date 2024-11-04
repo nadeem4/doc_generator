@@ -14,11 +14,11 @@ class DataFetcher(ABC):
         Args:
             source (str): The URL or path of the data source to fetch.
 
-        Raises:
-            ValueError: If the source is invalid or inaccessible.
-
         Returns:
             str: The data retrieved from the specified source, if successful.
+
+        Raises:
+            ValueError: If the source is invalid or inaccessible.
         """
         pass
 

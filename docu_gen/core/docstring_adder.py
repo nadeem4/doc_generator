@@ -8,7 +8,7 @@ from docu_gen.core.validate import validate_only_docstrings_added
 class DocstringAdder(cst.CSTTransformer):
     """A class that adds docstrings to other classes."""
 
-    def __init__(self, override=False):
+    def __init__(self, llm, override=False):
         """Initialize the object with optional override flag.
 
         Args:
@@ -21,7 +21,7 @@ class DocstringAdder(cst.CSTTransformer):
             None
         """
         super().__init__()
-        self.llm = LLM()
+        self.llm = llm
         self.current_class_name = None
         self.override = override
 
@@ -232,7 +232,7 @@ class ClassOrFunctionFinder(cst.CSTVisitor):
         return False
 
 
-def add_docstrings_to_code(source_code, file_path, override=False):
+def add_docstrings_to_code(source_code, llm: LLM, file_path, override=False):
     """Add docstrings to classes and functions in Python source code.
 
     Args:
@@ -270,12 +270,12 @@ def add_docstrings_to_code(source_code, file_path, override=False):
         )
         return source_code
 
-    transformer = DocstringAdder(override=override)
+    transformer = DocstringAdder(llm, override=override, stream=stream)
     modified_tree = module.visit(transformer)
     return modified_tree.code
 
 
-def add_docstrings_to_file(file_path, override=False):
+def add_docstrings_to_file(file_path, llm: LLM, override=False):
     """Add docstrings to the functions in a Python file and write them back to the file.
 
     Args:
@@ -296,7 +296,9 @@ def add_docstrings_to_file(file_path, override=False):
         print(f"File '{file_path}' is empty and will be skipped.")
         return
 
-    modified_code = add_docstrings_to_code(source_code, file_path, override)
+    modified_code = add_docstrings_to_code(
+        source_code, llm, file_path, override, stream
+    )
 
     print(f"Validating changes for file: {file_path}")
     if validate_only_docstrings_added(source_code, modified_code):

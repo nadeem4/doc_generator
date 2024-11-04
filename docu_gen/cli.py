@@ -26,6 +26,10 @@ def main():
     parser.add_argument(
         "--override", action="store_true", help="Override existing docstrings."
     )
+    # add argument for stream = True
+    parser.add_argument(
+        "--stream", action="store_true", help="Stream the output to the console."
+    )
     parser.add_argument(
         "--inferece_client",
         "-ic",
@@ -50,14 +54,20 @@ def main():
     if args.model:
         os.environ["MODEL_NAME"] = args.model
 
+    from docu_gen.utils.llm import LLM
+
+    llm = LLM(stream=args.stream)
+
     for path in args.paths:
         if os.path.isfile(path):
             if not is_excluded(path, args.exclude) and path.endswith(".py"):
-                add_docstrings_to_file(path, override=args.override)
+                add_docstrings_to_file(path, llm, override=args.override)
         else:
             for root, _, files in os.walk(path):
                 for file in files:
                     if file.endswith(".py"):
                         file_path = os.path.join(root, file)
                         if not is_excluded(file_path, args.exclude):
-                            add_docstrings_to_file(file_path, override=args.override)
+                            add_docstrings_to_file(
+                                file_path, llm, override=args.override
+                            )
