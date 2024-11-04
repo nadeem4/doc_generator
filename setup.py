@@ -18,10 +18,12 @@ setup(
         "azure-identity>=1.7.0,<2.0.0",
         "azure-keyvault-secrets>=4.2.0,<5.0.0",
         "azure-storage-blob>=12.8.0,<13.0.0",
+        "groq",
     ],
     entry_points={
         "console_scripts": [
             "generate_docstring=docu_gen.cli:main",
+            "gd=docu_gen.cli:main",
         ],
     },
     classifiers=[

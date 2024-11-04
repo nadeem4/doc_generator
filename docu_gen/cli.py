@@ -1,6 +1,7 @@
 import os
 import argparse
 from docu_gen.core.docstring_adder import add_docstrings_to_file, is_excluded
+from docu_gen.core.constant import DEFAULT_MODEL_NAME, DEFAULT_INFERENCE_CLIENT
 
 
 def main():
@@ -25,13 +26,29 @@ def main():
     parser.add_argument(
         "--override", action="store_true", help="Override existing docstrings."
     )
-    parser.add_argument("--apikey", help="OpenAI API key.")
+    parser.add_argument(
+        "--inferece_client",
+        "-ic",
+        default=DEFAULT_INFERENCE_CLIENT,
+        help="Inference client to use for generation.",
+    )
+    parser.add_argument(
+        "--model",
+        "-m",
+        default=DEFAULT_MODEL_NAME,
+        help="Model name to use for generation.",
+    )
+    parser.add_argument("--apikey", "-k", help="OpenAI/Groq API key.")
     args = parser.parse_args()
 
     # Set the API key to environment variable if provided
     if args.apikey:
-        os.environ["OPENAI_API_KEY"] = args.apikey
-    args = parser.parse_args()
+        os.environ["API_KEY"] = args.apikey
+
+    if args.inferece_client:
+        os.environ["INFERENCE_CLIENT"] = args.inferece_client
+    if args.model:
+        os.environ["MODEL_NAME"] = args.model
 
     for path in args.paths:
         if os.path.isfile(path):

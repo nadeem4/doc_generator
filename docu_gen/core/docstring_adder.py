@@ -22,7 +22,6 @@ class DocstringAdder(cst.CSTTransformer):
         """
         super().__init__()
         self.llm = LLM()
-        self.llm.initialize_client()
         self.current_class_name = None
         self.override = override
 
@@ -267,7 +266,7 @@ def add_docstrings_to_code(source_code, file_path, override=False):
 
     if not class_or_function_finder.has_class_or_function:
         print(
-            f"File '{file_path}' does not contain classes, methods, or functions and will be skipped."
+            f"File '{file_path}' does not contain classes or functions and will be skipped."
         )
         return source_code
 
