@@ -20,11 +20,17 @@ class APIKeyHandler:
         """
         self._successor = successor
 
-    def handle(self):
-        """Raise NotImplementedError with a message indicating that the 'handle' method
-        must be implemented.
+    def handle(self, provider_name: str):
+        """Handle the request to retrieve an API key for the given provider.
+
+        This method must be implemented by subclasses.
+
+        Args:
+            provider_name (str): The name of the AI provider (e.g., "openai", "anthropic").
 
         Raises:
             NotImplementedError: Indicates that the 'handle' method must be implemented.
         """
-        raise NotImplementedError("Must implement handle method.")
+        raise NotImplementedError(
+            "Subclasses must implement the 'handle' method."
+        )

@@ -15,3 +15,29 @@ repos:
     hooks:
       - id: black
         language_version: python3
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: ["--profile", "black"]
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.0 # Choose a version
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-docstrings] # Optional: for pydocstyle checks via flake8
+        # You can customize flake8 further with a .flake8 config file
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0 # Choose a version
+    hooks:
+      - id: mypy
+        # args: [--strict] # Uncomment and adjust as needed for stricter type checking
+        # additional_dependencies: [types-requests] # Add types for third-party libraries
+        # pass_filenames: false # mypy prefers to be run on packages/modules
+        # files: ^docu_gen/ # Specify paths to check
+        # exclude: ^(docs/|tests/) # Specify paths to exclude
+        # Note: mypy can be slow. You might want to run it less frequently or in CI.
+        # For initial setup, you might want to leave args commented out or use less strict options.

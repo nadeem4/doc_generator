@@ -8,8 +8,34 @@
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		"ghcr.io/devcontainers/features/git:1": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
+	"postCreateCommand": "pip3 install --user -r requirements.txt && pre-commit install",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"charliermarsh.ruff",
+				"njpwerner.autodocstring",
+				"GitHub.vscode-pull-request-github",
+				"ms-azuretools.vscode-docker"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python", // Adjust if your base image python path differs
+				"python.linting.enabled": true,
+				"python.formatting.provider": "none", // Assuming Ruff or Black will handle formatting via pre-commit or on save
+				"[python]": {
+					"editor.defaultFormatter": "charliermarsh.ruff", // Or "ms-python.black-formatter" if you prefer Black
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
+					}
+				},
+				"files.eol": "\n" // Enforce LF line endings
+			}
+		}
 	}
-	,"postCreateCommand": "pip3 install --user -r requirements.txt"
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -24,4 +50,5 @@
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
+
 }

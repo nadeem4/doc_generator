@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docu-gen"
+version = "1.8.0"
+description = "A tool to automatically add docstrings to Python code using various Large Language Models (LLMs) via Langchain."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+# Replace with actual author details
+authors = [
+  {name = "Nadeem", email = "nadeem@example.com"}
+]
+keywords = ["docstring", "generator", "llm", "langchain", "ai", "documentation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Software Development :: Documentation",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "libcst>=0.4.9", # Check for latest compatible version
+    "langchain>=0.1.0", # Check for latest compatible version
+    "langchain-openai",
+    "langchain-anthropic",
+    "langchain-cohere",
+    "langchain-community", # For Ollama
+    "azure-identity",
+    "azure-keyvault-secrets",
+    "python-dotenv" # For .env file support in apikey_handler (if still used, or for general convenience)
+]
+
+[project.scripts]
+generate_docstring = "docu_gen.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/nadeem4/doc_generator"
+Repository = "https://github.com/nadeem4/doc_generator"
+# Bug Tracker = "https://github.com/nadeem4/doc_generator/issues"
+
+# Tool configurations (like black, pytest, etc.) can be added here later.
+# For example:
+# [tool.pytest.ini_options]
+# minversion = "6.0"
+# addopts = "-ra -q"
+# testpaths = [
+#     "tests",
+# ]

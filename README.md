@@ -1,30 +1,48 @@
-
 # Docstring Generator
 
-A tool to automatically add docstrings to your Python code using Large Language Models (LLMs), ensuring your code remains unchanged except for the addition of docstrings.
+A tool to automatically add docstrings to your Python code using various Large Language Models (LLMs) via Langchain, ensuring your code remains unchanged except for the addition of docstrings.
 
 ## Features
 
 - **Automatic Docstring Generation**: Generate comprehensive and descriptive docstrings for your Python classes, methods, and functions.
-- **OpenAI Integration**: Utilize OpenAI's powerful language models to create meaningful docstrings.
+- **Multi-Provider LLM Support**: Utilizes Langchain to integrate with various LLM providers:
+  - OpenAI
+  - Anthropic
+  - Cohere
+  - Ollama (for local models)
 - **Code Integrity Validation**: Ensures that no changes are made to your code other than adding docstrings.
-- **Flexible API Key Management**: Pass your OpenAI API key via command-line arguments or retrieve it securely from Azure Key Vault.
+- **Flexible API Key Management**: Pass your API key via command-line arguments or retrieve it securely from environment variables or Azure Key Vault.
+- **Configurable Logging**: Control log verbosity with `--log-level` and `--verbose` options.
 
 ## Installation
 
-You can install the `docstring_generator` package using `pip`:
+You can install the `docu-gen` package from PyPI using `pip` (once published):
 
 ```bash
 pip install docu-gen
 ```
 
-Alternatively, clone the repository and install the required packages:
+Alternatively, to install from source (e.g., for development or to get the latest unreleased changes):
 
-```bash
-git clone https://github.com/nadeem4/doc_generator.git
-cd doc_generator/
-pip install .
-```
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/nadeem4/doc_generator.git
+    cd doc_generator/
+    ```
+
+2. Install the package:
+    - For a standard installation from source (installs runtime dependencies):
+
+        ```bash
+        pip install .
+        ```
+
+    - For an editable installation (recommended for development), which also installs development tools listed in `requirements.txt` (if `requirements.txt` includes `-e .` and dev dependencies):
+
+        ```bash
+        pip install -r requirements.txt
+        ```
 
 ## Usage
 
@@ -38,125 +56,163 @@ generate_docstring [options] paths
 
 ### Optional Arguments
 
-- **--exclude**: Patterns to exclude from processing. Accepts multiple patterns.
-
+- **--exclude**: Patterns to exclude from processing (e.g., '*/test_*', 'venv/*'). Applied to full paths and file names.
   **Example**:
 
   ```bash
-  generate_docstring example_project/ --exclude tests/* 
+  generate_docstring example_project/ --exclude tests/*
   ```
 
-  This command processes all files in `example_project/` except those in `tests/` directories.
-
 - **--override**: Overrides existing docstrings. By default, existing docstrings are preserved.
-
   **Example**:
 
   ```bash
   generate_docstring example_project/ --override
   ```
 
-  This command regenerates docstrings even if they already exist in the code.
-
-- **--apikey**: Your OpenAI API key.
-
+- **--provider**: AI provider to use (e.g., `openai`, `anthropic`, `cohere`, `ollama`). Default: `openai`.
   **Example**:
 
   ```bash
-  generate_docstring example_project/ --apikey YOUR_OPENAI_API_KEY
+  generate_docstring example_project/ --provider anthropic
+  ```
+
+- **--model**: Model name to use for the selected provider. If not provided, a default model for the provider may be used by the LLM client.
+  **Example**:
+
+  ```bash
+  generate_docstring example_project/ --provider openai --model gpt-4
+  ```
+
+- **--api-key**: API key for the selected provider. If provided, it sets the corresponding environment variable (e.g., `OPENAI_API_KEY` for `--provider openai`).
+  **Example**:
+
+  ```bash
+  generate_docstring example_project/ --provider openai --api-key YOUR_OPENAI_API_KEY
   ```
 
   If not provided, the program will attempt to retrieve the API key from environment variables or Azure Key Vault.
 
+- **--log-level**: Set the logging level. Choices: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Default: `INFO`.
+  **Example**:
+
+  ```bash
+  generate_docstring example_project/ --log-level DEBUG
+  ```
+
+- **-v, --verbose**: Enable verbose (DEBUG level) logging. Overrides `--log-level`.
+  **Example**:
+
+  ```bash
+  generate_docstring example_project/ -v
+  ```
+
 ## API Key Handling
 
-The application retrieves the OpenAI API key using a chain of responsibility pattern with the following handlers:
+The application retrieves API keys using a chain of responsibility pattern implemented by three handlers:
 
-1. **Command-Line Argument**: If the `--apikey` argument is provided, it uses this value.
+1. **Command-Line Argument Handler (`--api-key`)**:
+    The `CLIAPIKeyHandler` sets the API key in the environment variable if provided via the CLI argument. This is the first handler in the chain and the most direct way to supply a key.
 
-2. **Environment Variable**: Checks for the `OPENAI_API_KEY` environment variable.
+2. **Environment Variable Handler**:
+    The `EnvAPIKeyHandler` attempts to retrieve the API key from provider-specific environment variables:
+    - For OpenAI: `OPENAI_API_KEY`
+    - For Anthropic: `ANTHROPIC_API_KEY`
+    - For Cohere: `COHERE_API_KEY`
+    - (Ollama typically runs locally and may not require an API key.)
 
-   ```bash
-   generate_docstring example_project/
-   ```
+3. **Azure Key Vault Handler**:
+    The `AzureKeyVaultAPIKeyHandler` attempts to retrieve the API key from Azure Key Vault if the environment variable is not set. This requires:
+    - `AZURE_KEY_VAULT_URL`: The URL of your Azure Key Vault (e.g., `https://your-key-vault-name.vault.azure.net/`).
+    - Provider-specific secret name environment variables:
+        - For OpenAI: `AZURE_OPENAI_SECRET_NAME` (value should be the name of the secret in Key Vault storing the OpenAI API key).
+        - For Anthropic: `AZURE_ANTHROPIC_SECRET_NAME`.
+        - For Cohere: `AZURE_COHERE_SECRET_NAME`.
+    **Example for Azure Key Vault with OpenAI**:
+    Set environment variables:
 
-3. **Azure Key Vault**: Retrieves the API key from Azure Key Vault using `AZURE_KEY_VAULT_URL` and `AZURE_SECRET_NAME` environment variables.
+    ```bash
+    export AZURE_KEY_VAULT_URL="https://your-kv.vault.azure.net/"
+    export AZURE_OPENAI_SECRET_NAME="MyOpenAISecret"
+    ```
 
-   ```bash
-   generate_docstring example_project/
-   ```
+    Then run:
 
-If the API key is not found through any of these methods, the program will exit with an error message.
+    ```bash
+    generate_docstring example_project/ --provider openai
+    ```
+
+If an API key is required for the selected provider and not found through any of these methods, the program will exit with an error.
 
 ## Examples
 
-1. **Generate docstrings for specific files**:
+1. **Generate docstrings for specific files using OpenAI (default provider and model)**:
 
-   ```bash
-   generate_docstring module1.py module2.py
-   ```
+    ```bash
+    # If --provider and --model are omitted, defaults to OpenAI and its default model (e.g., gpt-3.5-turbo).
+    generate_docstring module1.py module2.py --api-key YOUR_OPENAI_API_KEY
+    ```
 
-2. **Process an entire directory excluding certain patterns**:
+2. **Process an entire directory with Anthropic, excluding patterns, with debug logging**:
 
-   ```bash
-   generate_docstring example_project/ --exclude tests/* docs/*
-   ```
+    ```bash
+    generate_docstring example_project/ --provider anthropic --model claude-3-haiku-20240307 --exclude tests/* docs/* --api-key YOUR_ANTHROPIC_API_KEY --log-level DEBUG
+    ```
 
-3. **Override existing docstrings and provide API key via command-line**:
+3. **Override existing docstrings using Cohere (e.g., 'command' model) and API key from environment**:
+    Assuming `COHERE_API_KEY` is set in your environment:
 
-   ```bash
-   generate_docstring example_project/ --override --apikey YOUR_OPENAI_API_KEY
-   ```
+    ```bash
+    generate_docstring example_project/ --provider cohere --model command --override -v
+    ```
 
-4. **Retrieve API key from Azure Key Vault**:
+4. **Use a local Ollama model (e.g., Llama3)**:
+    Ensure Ollama is running and the model is pulled (e.g., `ollama pull llama3`).
 
-   Set the necessary environment variables:
+    ```bash
+    generate_docstring example_project/ --provider ollama --model llama3
+    ```
 
-   ```bash
-   AZURE_KEY_VAULT_URL=https://your-key-vault-name.vault.azure.net/
-   AZURE_SECRET_NAME=OpenAIAPIKey
-   ```
+5. **Retrieve OpenAI API key from Azure Key Vault**:
+    Set environment variables (syntax for Linux/macOS; adapt for Windows, e.g., `set VAR=VALUE` or `$env:VAR="VALUE"`):
 
-   Then run:
+    ```bash
+    export AZURE_KEY_VAULT_URL="https://your-kv.vault.azure.net/"
+    export AZURE_OPENAI_SECRET_NAME="OpenAI-API-Secret"
+    ```
 
-   ```bash
-   generate_docstring example_project/
-   ```
+    Then run:
 
-## Explanation of Arguments
-
-- **paths**: Specifies the files or directories to process. Multiple paths can be provided.
-
-- **--exclude**: Patterns to exclude from processing. Useful for skipping directories like tests or documentation. Accepts glob patterns.
-
-- **--override**: If set, the tool will overwrite existing docstrings. By default, it only adds docstrings where they are missing.
-
-- **--apikey**: Your OpenAI API key. If not provided, the tool looks for the API key in the environment variables or Azure Key Vault.
+    ```bash
+    generate_docstring example_project/ --provider openai
+    ```
 
 ## How It Works
 
-1. **Docstring Generation**: The tool scans the specified Python files and identifies functions, classes, and methods lacking docstrings.
-
-2. **OpenAI API Call**: For each item needing a docstring, the tool sends a request to the OpenAI API to generate an appropriate docstring.
-
-3. **Code Integrity Validation**: After generating the docstrings, the tool checks to ensure that only docstrings were added and no other code changes occurred.
-
-4. **API Key Retrieval**: Utilizes a handler chain to securely retrieve the OpenAI API key from the command-line argument, environment variable, or Azure Key Vault.
+1. **CLI Parsing**: Parses command-line arguments for paths, provider, model, API key, logging, and other options.
+2. **Logging Setup**: Initializes the logging system based on `--log-level` or `--verbose` arguments.
+3. **API Key Resolution**: The API key for the selected provider is resolved using command-line arguments, environment variables, or Azure Key Vault.
+4. **LLM Initialization**: An LLM client is initialized using Langchain with the specified provider, model, and API key.
+5. **Docstring Generation**: The tool scans Python files, identifies code elements (classes, functions, methods) needing docstrings (or all if `--override` is used).
+6. **Langchain Invocation**: For each item, a request is made to the configured LLM via Langchain to generate a docstring.
+7. **Code Integrity Validation**: Ensures that only docstrings were added and no other code changes occurred.
+8. **File Update**: The modified code with new docstrings is written back to the file.
 
 ## Requirements
 
-- Python 3.6 or higher
-- An OpenAI API key
-- Azure credentials (if using Azure Key Vault)
+- Python 3.8 or higher (due to Langchain dependencies)
+- Langchain and provider-specific libraries (e.g., `langchain-openai`, `langchain-anthropic`). These are installed as dependencies.
+- API key for the chosen cloud LLM provider (OpenAI, Anthropic, Cohere).
+- Azure credentials (if using Azure Key Vault).
+- Ollama installed and running with desired models pulled (if using Ollama).
 
-## OpenAI Integration
+## LLM Integration
 
-Ensure you have access to the OpenAI API and have sufficient credits or a subscription plan. The tool uses the API to generate human-like docstrings based on your code.
-
+The tool leverages Langchain to interface with various LLMs. This allows flexibility in choosing the model and provider that best suits your needs. Ensure you have the necessary API keys and permissions for the cloud providers you intend to use. For local models with Ollama, ensure your Ollama service is operational.
 
 ## Security Notes
 
-- **API Keys**: Be cautious with your API keys. Do not hard-code them into your scripts or share them publicly.
+- **API Keys**: Be cautious with your API keys. Do not hard-code them into your scripts or share them publicly. Use environment variables or a secrets manager like Azure Key Vault.
 - **Azure Authentication**: When using Azure Key Vault, the `DefaultAzureCredential` attempts multiple authentication methods. Ensure your environment is set up for one of the supported authentication methods (e.g., Azure CLI, Environment Variables, Managed Identity).
 
 ## License
